@@ -1,10 +1,13 @@
 package com.esri
 
+/*
 import com.memsql.spark.connector._
 import org.apache.spark.sql.types.{IntegerType, StructField, StructType}
 import org.apache.spark.sql.{Row, SparkSession}
+*/
 
 object MemApp extends App {
+  /*
   val spark = SparkSession
     .builder()
     .master("local[*]")
@@ -16,8 +19,6 @@ object MemApp extends App {
     .getOrCreate()
 
   try {
-    // import spark.implicits._
-
     val rows = Seq(
       Row(11111),
       Row(22222),
@@ -37,4 +38,5 @@ object MemApp extends App {
   finally {
     spark.stop()
   }
+  */
 }

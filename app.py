@@ -2,6 +2,7 @@ import json
 
 import os
 import pystache
+from pyjavaproperties import Properties
 
 
 def read_json(json_filename):
@@ -11,28 +12,35 @@ def read_json(json_filename):
 
 def main():
     es2sql = {
-        "geo_point": "StringType",
         "string": "StringType",
         "float": "FloatType",
         "double": "DoubleType",
         "integer": "IntegerType",
+        "int": "IntegerType",
+        "date-iso": "DateType",
         "date": "DateType"
     }
     config = read_json("app.json")
 
+    p = Properties()
+    p.load(open("dmat.properties"))
+
     fields = []
-    dmat = read_json("dmat.json")
-    properties = dmat["mappings"]["geo"]["properties"]
     index = 0
-    for name, value in properties.iteritems():
-        sql_type = es2sql[value["type"]]
-        fields.append({
-            "name": name,
-            "type": sql_type,
-            "index": index,
-            "delimiter": ","
-        })
-        index += 1
+    for field in p['fields'].split(';'):
+        print(field)
+        tokens = field.split(',')
+        if tokens[0] == 'geo':
+            continue
+        else:
+            sql_type = es2sql[tokens[0]]
+            fields.append({
+                "name": tokens[1],
+                "type": sql_type,
+                "index": index,
+                "delimiter": ","
+            })
+            index += 1
 
     fields[-1]["delimiter"] = ""
     config["fields"] = fields

@@ -41,7 +41,7 @@ object MainApp extends App {
         spark
         .read
         .format("csv")
-        .option("delimiter", conf.get("spark.app.input.delimiter", ","))
+        .option("delimiter", conf.get("spark.app.input.delimiter", ";"))
         .option("header", conf.getBoolean("spark.app.input.header", true))
         .option("mode", ParseModes.DROP_MALFORMED_MODE)
         .option("timestampFormat", conf.get("spark.app.input.timestampFormat", "yyyy-MM-dd HH:mm:ss"))

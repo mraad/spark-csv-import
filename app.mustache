@@ -63,6 +63,11 @@ object MainApp extends App {
             val mx = x toMercatorX
             val my = y toMercatorY
 
+            val region = row.getString(row.fieldIndex("vz_regions")) match {
+            case null => "other"
+            case region => region.toLowerCase
+            }
+
             Map(
             {{#fields}}
                 "{{name}}" -> row.get({{index}}),
@@ -73,7 +78,7 @@ object MainApp extends App {
                 "loc"->f"$y%.6f,$x%.6f",
                 "loc_mx"->mx,
                 "loc_my"->my,
-                "region"->row.getString(row.fieldIndex("{{region}}")).toLowerCase
+                "region"->region
             )
             })
         })

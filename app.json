@@ -1,8 +1,8 @@
 {
-  "input_path": "/tmp/input.csv",
+  "input_path": "dmat.csv",
   "database": "dmat",
   "table": "dmat",
-  "field_x": "lon",
+  "field_x": "lng",
   "field_y": "lat",
   "region": "vz_regions",
   "hexs": [

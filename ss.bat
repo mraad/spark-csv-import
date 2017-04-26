@@ -1,0 +1,1 @@
+spark-submit --master local[*] --conf spark.ui.enabled=false --conf spark.es.nodes=10.20.40.112 --jars ./jars/webmercator_2.11-1.2.jar,./jars/hex-grid_2.11-1.2.jar --packages org.elasticsearch:elasticsearch-spark-20_2.11:5.3.1 target/scala-2.11/spark-csv-import_2.11-0.1.jar

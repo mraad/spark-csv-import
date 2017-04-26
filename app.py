@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 import json
 
 import os
@@ -28,7 +31,7 @@ def main():
     fields = []
     index = 0
     for field in p['fields'].split(';'):
-        print(field)
+        # print(field)
         tokens = field.split(',')
         if tokens[0] == 'geo':
             continue

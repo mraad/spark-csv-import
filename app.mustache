@@ -64,8 +64,16 @@ object MainApp extends App {
             val my = y toMercatorY
 
             val region = row.getString(row.fieldIndex("vz_regions")) match {
-            case null => "other"
-            case region => region.toLowerCase
+                case null => "wd"
+                case region => region.toLowerCase match {
+                case "ne" => "ne"
+                case "nc" => "nc"
+                case "se" => "se"
+                case "sc" => "sc"
+                case "pf" => "pf"
+                case "gl" => "gl"
+                case _ => "wd"
+                }
             }
 
             Map(

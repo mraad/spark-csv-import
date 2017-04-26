@@ -1,0 +1,25 @@
+{
+  "input_path": "/tmp/input.csv",
+  "database": "dmat",
+  "table": "dmat",
+  "field_x": "lon",
+  "field_y": "lat",
+  "region": "vz_regions",
+  "hexs": [
+    {
+      "hex": 50
+    },
+    {
+      "hex": 100
+    },
+    {
+      "hex": 200
+    },
+    {
+      "hex": 500
+    },
+    {
+      "hex": 1000
+    }
+  ]
+}

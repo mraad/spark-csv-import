@@ -1,0 +1,85 @@
+package com.esri
+
+import com.esri.hex.HexGrid
+import com.esri.webmercator._
+import org.apache.spark.sql.catalyst.util.ParseModes
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Row, SparkSession}
+import org.elasticsearch.hadoop.cfg.ConfigurationOptions._
+import org.elasticsearch.spark._
+
+
+object MainApp extends App {
+    val spark = SparkSession
+    .builder()
+    .getOrCreate()
+
+    try {
+        // import spark.implicits._
+
+        val conf = spark.sparkContext.getConf
+
+        val xmin = conf.getDouble("spark.app.xmin", -180.0)
+        val ymin = conf.getDouble("spark.app.ymin", -90.0)
+        val xmax = conf.getDouble("spark.app.xmax", 180.0)
+        val ymax = conf.getDouble("spark.app.ymax", 90.0)
+
+        /*
+        val hc = spark.sparkContext.hadoopConfiguration
+        hc.set("fs.s3a.access.key", conf.get("spark.app.access.key"))
+        hc.set("fs.s3a.secret.key", conf.get("spark.app.secret.key"))
+        */
+        val schema = new StructType(Array(
+        {{#fields}}
+            StructField("{{name}}", {{type}}){{delimiter}}
+        {{/fields}}
+        ))
+
+        implicit val rowEncoder = org.apache.spark.sql.Encoders.kryo[Row]
+        implicit val mapEncoder = org.apache.spark.sql.Encoders.kryo[Map[String, Any]]
+
+        spark
+        .read
+        .format("csv")
+        .option("delimiter", conf.get("spark.app.input.delimiter", ","))
+        .option("header", conf.getBoolean("spark.app.input.header", true))
+        .option("mode", ParseModes.DROP_MALFORMED_MODE)
+        .option("timestampFormat", conf.get("spark.app.input.timestampFormat", "yyyy-MM-dd HH:mm:ss"))
+        .schema(schema)
+        .load(conf.get("spark.app.input.path", "{{input_path}}"))
+        .filter(row => {
+            val x = row.getDouble(row.fieldIndex("{{field_x}}"))
+            val y = row.getDouble(row.fieldIndex("{{field_y}}"))
+            xmin < x && x < xmax &&
+            ymin < y && y < ymax
+        })
+        .mapPartitions(iter => {
+            {{#hexs}}
+                val grid{{hex}} = HexGrid({{hex}}, -20000000.0, -20000000.0)
+            {{/hexs}}
+            iter.map(row => {
+            val x = row.getDouble(row.fieldIndex("{{field_x}}"))
+            val y = row.getDouble(row.fieldIndex("{{field_y}}"))
+            val mx = x toMercatorX
+            val my = y toMercatorY
+
+            Map(
+            {{#fields}}
+                "{{name}}" -> row.get({{index}}),
+            {{/fields}}
+            {{#hexs}}
+                "loc_{{hex}}" -> grid{{hex}}.convertXYToRowCol(mx, my).toText,
+            {{/hexs}}
+                "loc"->f"$y%.6f,$x%.6f",
+                "loc_mx"->mx,
+                "loc_my"->my,
+                "region"->row.getString(row.fieldIndex("{{region}}")).toLowerCase
+            )
+            })
+        })
+        .rdd
+        .saveToEs("dmat-{region}/geo", Map(ES_MAPPING_EXCLUDE -> "region"))
+    } finally {
+        spark.stop()
+    }
+}

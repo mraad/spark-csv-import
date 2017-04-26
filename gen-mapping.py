@@ -3,8 +3,8 @@
 # pip install pyjavaproperties
 #
 import json
-import os
 
+import os
 import sys
 from pyjavaproperties import Properties
 
@@ -31,16 +31,16 @@ def main():
         if tokens[0] == 'geo':
             name = tokens[1]
             properties[name] = {"type": "geo_point"}
-            properties[name + "_xm"] = {"type": "float", "index": "no"}
-            properties[name + "_ym"] = {"type": "float", "index": "no"}
+            properties[name + "_xm"] = {"type": "float", "index": "false"}
+            properties[name + "_ym"] = {"type": "float", "index": "false"}
             for hs in hex_sizes:
-                properties[name + "_" + hs] = {"type": "string", "index": "not_analyzed"}
+                properties[name + "_" + hs] = {"type": "keyword"}
         elif tokens[0] == 'grid':
             name = tokens[1]
             properties[name] = {"type": "geo_point"}
-            properties[name + "_xm"] = {"type": "float", "index": "no"}
-            properties[name + "_ym"] = {"type": "float", "index": "no"}
-            properties[name + "_g"] = {"type": "string", "index": "not_analyzed"}
+            properties[name + "_xm"] = {"type": "float", "index": "false"}
+            properties[name + "_ym"] = {"type": "float", "index": "false"}
+            properties[name + "_g"] = {"type": "keyword"}
         elif tokens[0] == 'int':
             properties[tokens[1]] = {"type": "integer"}
         elif tokens[0] == 'long':
@@ -73,7 +73,7 @@ def main():
             properties[name] = {"type": "date", "format": date_format}
         else:
             name = tokens[1]
-            properties[name] = {"type": "string", "index": "not_analyzed"}
+            properties[name] = {"type": "keyword"}
 
     doc = {
         "template": "dmat-*",

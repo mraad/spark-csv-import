@@ -75,10 +75,10 @@ def main():
             name = tokens[1]
             properties[name] = {"type": "keyword"}
 
+    # "index.routing.allocation.require.box_type": "hot",
     doc = {
         "template": "dmat-*",
         "settings": {
-            "index.routing.allocation.require.box_type": "hot",
             "number_of_shards": 1,
             "number_of_replicas": 0,
             "refresh_interval": "-1",

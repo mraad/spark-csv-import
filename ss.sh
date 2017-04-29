@@ -6,6 +6,7 @@ spark-submit\
  --conf spark.memsql.host=localhost\
  --conf spark.memsql.user=root\
  --conf spark.memsql.password=""\
+ --conf spark.app.input.path=dmat.csv\
  --packages com.esri:webmercator_2.11:1.2,com.esri:hex-grid_2.11:1.2,org.elasticsearch:elasticsearch-spark-20_2.11:5.3.1\
  target/scala-2.11/spark-csv-import_2.11-0.1.jar
 
